@@ -10,10 +10,25 @@ while True:
     try:
         s.listen(5)
         c,a=s.accept()
-        a=c.recv(64)
-        PUBSHA=str(a)
-        c.send("UID Free, assigning")
-        print(str(c.recv(64)))
-        c.send("Close")
+        if c.recv(64) == "SIGNUP":
+            a=c.recv(64)
+            PUBSHA=str(a)
+            c.send("UID Free, assigning")
+            f=open("claimeuids.txt","a")
+            f.write(PUBSHA)
+            f.close()
+            print(str(c.recv(64)))
+            b=c.recv(64)
+            if b=="Requesting Server Public Key":
+                s.send("TEST")
+        elif c.recv(64) == "LOGIN":
+            UID=c.recv(64)
+            f=open("claimeduids.txt","r")
+            uids=f.read()
+            f.close()
+            if UID in str(uids):
+                c.send("Username Good.")
+            else:
+                c.send("Username Bad.")
     except:
         pass

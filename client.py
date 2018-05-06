@@ -36,18 +36,35 @@ print("\nUSERID:\n"+str(SHA256PK))
 import socket
 import sys
 import time as t
+def login():
+    s=socket.socket()
+    s.connect((server,int(port)))
+    s.send("LOGIN")
+    s.send(UID)
+    reply=s.recv(64)
+    if reply=="Username Good.":
+        print("Logged in!")
+    elif reply=="Username Bad.":
+        print("There's a problem.")
 def Connect():
+    global server
+    global port
+    global UID
+    global spk
     server=sys.argv[1]
     port=9876
     s=socket.socket()
     s.connect((server,int(port)))
+    s.send("SIGNUP")
     s.send(SHA256PK)
     a=s.recv(9999)
     if str(a)=="UID Free, assigning":
         print("Public Key assigned to client!")
         s.send("Test!")
-        print(str(s.recv(64)))
-        s.close()
+        UID=SHA256PK
+        s.send("Requesting Server Public Key")
+        spk=s.recv(999999)
+        login()
     elif str(a)=="UID Claimed, pick a new one.":
         print("Public Key exists, regenerating")
         s.close()
