@@ -14,7 +14,7 @@ while True:
             a=c.recv(64)
             PUBSHA=str(a)
             c.send("UID Free, assigning")
-            f=open("claimeuids.txt","a")
+            f=open("claimeduids.txt","a")
             f.write(PUBSHA)
             f.close()
             print(str(c.recv(64)))
